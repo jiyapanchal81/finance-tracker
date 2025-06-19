@@ -43,13 +43,7 @@ A comprehensive, fully functional personal finance management web application bu
 2. Open it in any modern web browser
 3. Start managing your finances immediately!
 
-### Alternative Setup
-```bash
-# If you want to serve it locally
-python -m http.server 8000
-# or
-npx serve .
-```
+
 
 ## 📱 Usage Guide
 
