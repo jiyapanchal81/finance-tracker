@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Personal Finance Tracker</h1>
+            <div class="header-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Total Balance</span>
+                    <span class="stat-value" id="totalBalance">$0.00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Monthly Income</span>
+                    <span class="stat-value income" id="monthlyIncome">$0.00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Monthly Expenses</span>
+                    <span class="stat-value expense" id="monthlyExpenses">$0.00</span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('transactions')">Transactions</button>
+            <button class="tab-btn" onclick="switchTab('budgets')">Budget</button>
+            <button class="tab-btn" onclick="switchTab('goals')">Goals</button>
+        </nav>
+
+        <main>
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="dashboard-grid">
+                    <div class="chart-container">
+                        <h3>Expense Categories</h3>
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Monthly Trends</h3>
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                    <div class="recent-transactions">
+                        <h3>Recent Transactions</h3>
+                        <div id="recentTransactionsList"></div>
+                    </div>
+                    <div class="budget-overview">
+                        <h3>Budget Overview</h3>
+                        <div id="budgetOverview"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Tab -->
+            <div id="transactions" class="tab-content">
+                <div class="transactions-header">
+                    <h2>Transactions</h2>
+                    <button class="btn btn-primary" onclick="showAddTransactionModal()">Add Transaction</button>
+                </div>
+                <div class="filters">
+                    <select id="transactionFilter">
+                        <option value="all">All Transactions</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expenses</option>
+                    </select>
+                    <select id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="food">Food</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="salary">Salary</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="transactions-list" id="transactionsList"></div>
+            </div>
+
+            <!-- Budget Tab -->
+            <div id="budgets" class="tab-content">
+                <div class="budget-header">
+                    <h2>Budget Management</h2>
+                    <button class="btn btn-primary" onclick="showAddBudgetModal()">Add Budget</button>
+                </div>
+                <div class="budget-list" id="budgetList"></div>
+            </div>
+
+            <!-- Goals Tab -->
+            <div id="goals" class="tab-content">
+                <div class="goals-header">
+                    <h2>Financial Goals</h2>
+                    <button class="btn btn-primary" onclick="showAddGoalModal()">Add Goal</button>
+                </div>
+                <div class="goals-list" id="goalsList"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('transactionModal')">&times;</span>
+            <h2>Add Transaction</h2>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="transactionType" required>
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount</label>
+                    <input type="number" id="transactionAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="transactionCategory" required>
+                        <option value="food">Food</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="salary">Salary</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="transactionDescription" required>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Budget Modal -->
+    <div id="budgetModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('budgetModal')">&times;</span>
+            <h2>Add Budget</h2>
+            <form id="budgetForm">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="budgetCategory" required>
+                        <option value="food">Food</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="utilities">Utilities</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Monthly Limit</label>
+                    <input type="number" id="budgetAmount" step="0.01" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Budget</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div id="goalModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('goalModal')">&times;</span>
+            <h2>Add Financial Goal</h2>
+            <form id="goalForm">
+                <div class="form-group">
+                    <label>Goal Name</label>
+                    <input type="text" id="goalName" required>
+                </div>
+                <div class="form-group">
+                    <label>Target Amount</label>
+                    <input type="number" id="goalTarget" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Current Amount</label>
+                    <input type="number" id="goalCurrent" step="0.01" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Target Date</label>
+                    <input type="date" id="goalDate" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Goal</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
